@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
 
 const draw = async (input) => {
   const response = await axios.post(
@@ -20,6 +20,16 @@ const draw = async (input) => {
 
   return response.data.data[0];
 };
+
+const imageBuffer = async (url) => {
+    const result = await axios({
+        method: 'get',
+        url: url,
+        responseType: 'stream'
+    });
+
+    return result.data;
+}
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -42,15 +52,10 @@ module.exports = {
 
       const result = await draw(prompt);
 
-      const embed = {
-        title: prompt,
-        description: result.revised_prompt,
-        image: {
-          url: result.url,
-        },
-      };
+      const stream = await imageBuffer(result.url);
+      const file = new AttachmentBuilder(stream);
 
-      await interaction.editReply({ embeds: [embed] });
+      await interaction.editReply({ content: `Revised prompt: \`${result.revised_prompt}\``, files: [file] });
     }
   },
 };
