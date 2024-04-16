@@ -55,7 +55,7 @@ module.exports = {
       const stream = await imageBuffer(result.url);
       const file = new AttachmentBuilder(stream);
 
-      await interaction.editReply({ content: `Revised prompt: \`${result.revised_prompt}\``, files: [file] });
+      await interaction.editReply({ content: `Original prompt: \`${prompt}\`\nRevised prompt: \`${result.revised_prompt}\``, files: [file] });
     }
   },
 };
